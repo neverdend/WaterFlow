@@ -36,7 +36,6 @@ end
 function GameScene:createBgLayer()
     local bgLayer = cc.Layer:create()
     local bgImg = cc.Sprite:create("WaterFlowBg.jpg")
---    bgImg:setContentSize(self.visibleSize.width, self.visibleSize.height)
     bgImg:setAnchorPoint(0.5, 0.5)
     bgImg:setPosition(self.origin.x + self.visibleSize.width/2, self.origin.y + self.visibleSize.height/2)
     bgLayer:addChild(bgImg)
@@ -62,14 +61,18 @@ end
 
 function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
-    local dot = cc.Sprite:create("93-dot-red-16.png")
-    local placeAction = cc.Place:create(cc.p(800.9, 800.9))
-    local moveToAction = cc.MoveTo:create(2, cc.p(112, 112))
+    animationLayer:addChild(createMovingPoint(800, 800, 1000, 1000))
+    return animationLayer
+end
+
+function createMovingPoint(startPointX, startPointY, endPointX, endPointY)
+    local point = cc.Sprite:create("93-dot-red-16.png")
+    local placeAction = cc.Place:create(cc.p(startPointX, startPointY))
+    local moveToAction = cc.MoveTo:create(2, cc.p(endPointX, endPointY))
     local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
     local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
-    dot:runAction(repeatForeverAction)
-    animationLayer:addChild(dot)
-    return animationLayer
+    point:runAction(repeatForeverAction)
+    return point
 end
 
 function getNextLine(str)
