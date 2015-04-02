@@ -7,13 +7,12 @@ end)
 
 function GameScene.create()
     local scene = GameScene.new()
---    scene:addChild(scene:createLayerFarm())
-    scene:addChild(scene:createBgLayer())
+    scene:addTouchPixelTest()
+    scene:addChild(scene:createBgLayer(), 0)
     scene:dataProcess()
-    scene:addChild(scene:createAnimationLayer())
+--    scene:addChild(scene:createAnimationLayer(), 1)
     return scene
 end
-
 
 function GameScene:ctor()
     self.visibleSize = cc.Director:getInstance():getVisibleSize()
@@ -21,41 +20,16 @@ function GameScene:ctor()
     self.schedulerID = nil
 end
 
-function GameScene:creatDog()
-    local frameWidth = 105
-    local frameHeight = 95
-
-    -- create dog animate
-    local textureDog = cc.Director:getInstance():getTextureCache():addImage("dog.png")
-    local rect = cc.rect(0, 0, frameWidth, frameHeight)
-    local frame0 = cc.SpriteFrame:createWithTexture(textureDog, rect)
-    rect = cc.rect(frameWidth, 0, frameWidth, frameHeight)
-    local frame1 = cc.SpriteFrame:createWithTexture(textureDog, rect)
-
-    local spriteDog = cc.Sprite:createWithSpriteFrame(frame0)
-    spriteDog:setPosition(self.origin.x, self.origin.y + self.visibleSize.height / 4 * 3)
-    spriteDog.isPaused = false
-
-    local animation = cc.Animation:createWithSpriteFrames({frame0,frame1}, 0.5)
-    local animate = cc.Animate:create(animation);
-    spriteDog:runAction(cc.RepeatForever:create(animate))
-
-    -- moving dog at every frame
-    local function tick()
-        if spriteDog.isPaused then return end
-        local x, y = spriteDog:getPosition()
-        if x > self.origin.x + self.visibleSize.width then
-            x = self.origin.x
-        else
-            x = x + 1
-        end
-
-        spriteDog:setPositionX(x)
+-- 触摸时显示坐标
+function GameScene:addTouchPixelTest()
+    local listener = cc.EventListenerTouchOneByOne:create()
+    listener:setSwallowTouches(true)
+    local function onTouchBegan(touch, event)
+        local location = touch:getLocation()
+        cclog("position is: "..location.x..", "..location.y)
     end
-
-    self.schedulerID = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tick, 0, false)
-
-    return spriteDog
+    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN)
+    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(listener, 1)
 end
 
 -- create background layer
@@ -66,6 +40,11 @@ function GameScene:createBgLayer()
     bgImg:setAnchorPoint(0.5, 0.5)
     bgImg:setPosition(self.origin.x + self.visibleSize.width/2, self.origin.y + self.visibleSize.height/2)
     bgLayer:addChild(bgImg)
+    
+    local dot = cc.Sprite:create("93-dot-red-5.png")
+--    dot:setAnchorPoint(0.5, 0.5)
+    dot:setPosition(self.origin.x + 109, self.origin.y+109)
+    bgLayer:addChild(dot)
     return bgLayer
 end
 
@@ -87,8 +66,16 @@ end
 
 function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
-    local dot = cc.Sprite:create("93-dot-red-5.png")
-    
+    local dot = cc.Sprite:create("crop.png")
+--    local placeAction = cc.Place:create(cc.p(109.9, 109.9))
+--    local moveToAction = cc.MoveTo:create(2, cc.p(112, 112))
+--    local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
+--    local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
+--    
+--    dot:runAction(repeatForeverAction)
+    dot:setPosition(109.9, 109.9)
+    animationLayer:addChild(dot)
+    return animationLayer
 end
 
 function getNextLine(str)
