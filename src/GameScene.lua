@@ -9,6 +9,8 @@ function GameScene.create()
     local scene = GameScene.new()
 --    scene:addChild(scene:createLayerFarm())
     scene:addChild(scene:createBgLayer())
+    scene:dataProcess()
+    scene:addChild(scene:createAnimationLayer())
     return scene
 end
 
@@ -65,6 +67,41 @@ function GameScene:createBgLayer()
     bgImg:setPosition(self.origin.x + self.visibleSize.width/2, self.origin.y + self.visibleSize.height/2)
     bgLayer:addChild(bgImg)
     return bgLayer
+end
+
+function GameScene:dataProcess()
+--    local file = io.open("testIo.txt","r")
+--    local line = file:read("*/")
+    local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF_reduced.TXT")
+    local nextLine, remainFile = getNextLine(file)
+--    while nextLine ~= nil do
+--        cclog(nextLine)
+--        nextLine, remainFile = getNextLine(remainFile)
+--    end
+    
+--    保存数据
+--    local data = {}
+--    local dataPos = 1
+--    local dataKey = {}
+end
+
+function GameScene:createAnimationLayer()
+    local animationLayer = cc.Layer:create()
+    local dot = cc.Sprite:create("93-dot-red-5.png")
+    
+end
+
+function getNextLine(str)
+    local pos = string.find(str, "\n")
+    local nextLine = nil
+    local remainStr = nil
+    if pos ~= nil then
+        nextLine = string.sub(str, 1, pos - 1)
+        remainStr = string.sub(str, pos+1)
+        return nextLine, remainStr
+    else
+        return nil, nil
+    end
 end
 
 return GameScene
