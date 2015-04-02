@@ -10,7 +10,7 @@ function GameScene.create()
     scene:addTouchPixelTest()
     scene:addChild(scene:createBgLayer(), 0)
     scene:dataProcess()
---    scene:addChild(scene:createAnimationLayer(), 1)
+    scene:addChild(scene:createAnimationLayer(), 1)
     return scene
 end
 
@@ -41,10 +41,6 @@ function GameScene:createBgLayer()
     bgImg:setPosition(self.origin.x + self.visibleSize.width/2, self.origin.y + self.visibleSize.height/2)
     bgLayer:addChild(bgImg)
     
-    local dot = cc.Sprite:create("93-dot-red-5.png")
---    dot:setAnchorPoint(0.5, 0.5)
-    dot:setPosition(self.origin.x + 109, self.origin.y+109)
-    bgLayer:addChild(dot)
     return bgLayer
 end
 
@@ -66,14 +62,12 @@ end
 
 function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
-    local dot = cc.Sprite:create("crop.png")
---    local placeAction = cc.Place:create(cc.p(109.9, 109.9))
---    local moveToAction = cc.MoveTo:create(2, cc.p(112, 112))
---    local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
---    local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
---    
---    dot:runAction(repeatForeverAction)
-    dot:setPosition(109.9, 109.9)
+    local dot = cc.Sprite:create("93-dot-red-16.png")
+    local placeAction = cc.Place:create(cc.p(800.9, 800.9))
+    local moveToAction = cc.MoveTo:create(2, cc.p(112, 112))
+    local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
+    local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
+    dot:runAction(repeatForeverAction)
     animationLayer:addChild(dot)
     return animationLayer
 end
