@@ -10,7 +10,7 @@ function GameScene.create()
     scene:addTouchPixelTest()
     scene:addChild(scene:createBgLayer(), 0)
     scene:dataProcess()
---    scene:setCordScale()
+    scene:setCordScale()
     scene:addChild(scene:createAnimationLayer(), 1)
     scene:printData()
     return scene
@@ -67,6 +67,7 @@ function GameScene:dataProcess()
             dataEle[dataKey[dataKeyIndex]] = tonumber(num)
             dataKeyIndex = dataKeyIndex+1
         end
+--      self.cordXMin, cordXMax, cordYMin, cordYMax直接从txt中人工取出，不再计算
 --        -- 更新self.cordXMin, cordXMax, cordYMin, cordYMax
 --        if dataEle["cordX"] ~= nil and dataEle["cordX"] > self.cordXMax then
 --            self.cordXMax = dataEle["cordX"]
@@ -90,6 +91,15 @@ function GameScene:dataProcess()
     end
 end
 
+function GameScene:setCordScale()
+    self.cordXMax = 60334.34
+    self.cordXMin = 42136.19
+    self.cordYMax = 60828.25
+    self.cordYMin = 40321.50
+    self.cordXScale = self.visibleSize.width/(self.cordXMax - self.cordXMin)
+    self.cordYScale = self.visibleSize.height/(self.cordYMax - self.cordYMin)
+end
+
 function GameScene:printData()
     cclog("Xmax - Xmin: "..self.cordXMax-self.cordXMin)
     cclog("Ymax - Ymin: "..self.cordYMax-self.cordYMin)
@@ -105,14 +115,23 @@ end
 
 function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
-    animationLayer:addChild(createMovingPoint(800, 800, 1000, 1000))
+    for key, value in ipairs(self.data) do
+        local cordXScaled, cordYScaled = self:changeCordinate(value["cordX"], value["cordY"])
+        local veloXScaled = value["veloV"] * 10
+        local veloYScaled = value["veloU"] * 10
+        animationLayer:addChild(createMovingPoint(cordXScaled, cordYScaled, veloXScaled, veloYScaled))
+    end
     return animationLayer
 end
 
-function createMovingPoint(startPointX, startPointY, endPointX, endPointY)
-    local point = cc.Sprite:create("93-dot-red-16.png")
+function GameScene:changeCordinate(cordX, cordY)
+    return (cordX - self.cordXMin)*self.cordXScale, (cordY - self.cordYMin)*self.cordYScale
+end
+
+function createMovingPoint(startPointX, startPointY, velocityX, velocityY)
+    local point = cc.Sprite:create("93-dot-red-3.png")
     local placeAction = cc.Place:create(cc.p(startPointX, startPointY))
-    local moveToAction = cc.MoveTo:create(2, cc.p(endPointX, endPointY))
+    local moveToAction = cc.MoveTo:create(1, cc.p(startPointX+velocityX, startPointY+velocityY))
     local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
     local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
     point:runAction(repeatForeverAction)
