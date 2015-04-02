@@ -10,7 +10,9 @@ function GameScene.create()
     scene:addTouchPixelTest()
     scene:addChild(scene:createBgLayer(), 0)
     scene:dataProcess()
+--    scene:setCordScale()
     scene:addChild(scene:createAnimationLayer(), 1)
+    scene:printData()
     return scene
 end
 
@@ -44,19 +46,61 @@ function GameScene:createBgLayer()
 end
 
 function GameScene:dataProcess()
---    local file = io.open("testIo.txt","r")
---    local line = file:read("*/")
+    -- 保存txt中的数据
+    -- 需要保存的内容
+    self.data = {}
+    self.cordXMin = 1000000
+    self.cordXMax = -1
+    self.cordYMin = 1000000
+    self.cordYMax = -1
+    local dataIndex = 1
+    local dataKey = {"gridX", "gridY", "cordX", "cordY", "veloU", "veloV", "veloUV", "waterHeight", "landHeight", "waterDepth"}
+    
+    -- 读取txt数据，一次读一行
     local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF_reduced.TXT")
     local nextLine, remainFile = getNextLine(file)
---    while nextLine ~= nil do
---        cclog(nextLine)
---        nextLine, remainFile = getNextLine(remainFile)
+    while nextLine ~= nil do
+        -- 构造数据
+        dataEle = {}
+        dataKeyIndex = 1
+        for num in string.gmatch(nextLine, "[%d.]+") do
+            dataEle[dataKey[dataKeyIndex]] = tonumber(num)
+            dataKeyIndex = dataKeyIndex+1
+        end
+--        -- 更新self.cordXMin, cordXMax, cordYMin, cordYMax
+--        if dataEle["cordX"] ~= nil and dataEle["cordX"] > self.cordXMax then
+--            self.cordXMax = dataEle["cordX"]
+--        end
+--        if dataEle["cordX"] ~= nil and dataEle["cordX"] < self.cordXMin then
+--            self.cordXMin = dataEle["cordX"]
+--        end
+--        if dataEle["cordY"] ~= nil and dataEle["cordY"] > self.cordYMax then
+--            self.cordYMax = dataEle["cordY"]
+--        end
+--        if dataEle["cordY"] ~= nil and dataEle["cordY"] < self.cordYMin then
+--            self.cordYMin = dataEle["cordY"]
+--        end
+        -- 只有过水的点才保存
+        if dataEle["waterDepth"] ~= 0.05 and dataEle["waterDepth"] ~= nil then
+            self.data[dataIndex] = dataEle
+            dataIndex = dataIndex+1
+        end
+        
+        nextLine, remainFile = getNextLine(remainFile)
+    end
+end
+
+function GameScene:printData()
+    cclog("Xmax - Xmin: "..self.cordXMax-self.cordXMin)
+    cclog("Ymax - Ymin: "..self.cordYMax-self.cordYMin)
+    cclog("visibleSizeWidth: "..self.visibleSize.width)
+    cclog("visibleSizeHeight: "..self.visibleSize.height)
+--    for key, value in ipairs(self.data) do
+--        print("key is "..key)
+--        for key2, value2 in pairs(value) do
+--            print("\t"..key2..":"..value2)
+--        end
 --    end
-    
---    保存数据
---    local data = {}
---    local dataPos = 1
---    local dataKey = {}
 end
 
 function GameScene:createAnimationLayer()
