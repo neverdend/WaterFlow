@@ -92,12 +92,25 @@ function GameScene:dataProcess()
 end
 
 function GameScene:setCordScale()
-    self.cordXMax = 60334.34
-    self.cordXMin = 42136.19
-    self.cordYMax = 60828.25
-    self.cordYMin = 40321.50
-    self.cordXScale = self.visibleSize.width/(self.cordXMax - self.cordXMin)
-    self.cordYScale = self.visibleSize.height/(self.cordYMax - self.cordYMin)
+    -- cad cordinate of the window 
+    self.cadUpLeftCornerCordX, self.cadUpLeftCornerCordY= 41732.0844, 66522.4017
+    self.cadUpRightCornerCordX, self.cadUpRightCornerCordY = 59731.0084, 66522.4017
+    self.cadDownLeftCornerCordX, self.cadDownLeftCornerCordY = 41732.0844, 40449.8388
+    self.cadDownRightCornerCordX, self.cadDownRightCornerCordY = 59731.0084, 40449.8388
+    -- world cordinate of the window
+    self.worldUpLeftCornerCordX, self.worldUpLeftCornerCordY = 185.93, 3285.8
+    self.worldUpRightCornerCordX, self.worldUpRightCornerCordY = 2301.86, 3285.8
+    self.worldDownLeftCornerCordX, self.worldDownLeftCornerCordY = 185.93, 208.18
+    self.worldDownRightCornerCordX, self.worldDownRightCornerCordY = 2301.86, 208.18    
+    -- cad-to-world transform scale factor
+    self.cordXScale = (self.worldUpRightCornerCordX - self.worldUpLeftCornerCordX) / (self.cadUpRightCornerCordX - self.cadUpLeftCornerCordX)
+    self.cordYScale = (self.worldUpLeftCornerCordY - self.worldDownLeftCornerCordY) / (self.cadUpLeftCornerCordY - self.cadDownLeftCornerCordY)
+--    self.cordXMax = 60334.34
+--    self.cordXMin = 42136.19
+--    self.cordYMax = 60828.25
+--    self.cordYMin = 40321.50
+--    self.cordXScale = self.visibleSize.width/(self.cordXMax - self.cordXMin)
+--    self.cordYScale = self.visibleSize.height/(self.cordYMax - self.cordYMin)
 end
 
 function GameScene:printData()
@@ -125,7 +138,7 @@ function GameScene:createAnimationLayer()
 end
 
 function GameScene:changeCordinate(cordX, cordY)
-    return (cordX - self.cordXMin)*self.cordXScale, (cordY - self.cordYMin)*self.cordYScale
+    return (cordX - self.cadDownLeftCornerCordX)*self.cordXScale+self.worldDownLeftCornerCordX, (cordY - self.cadDownLeftCornerCordY)*self.cordYScale+self.worldDownLeftCornerCordY
 end
 
 function createMovingPoint(startPointX, startPointY, velocityX, velocityY)
