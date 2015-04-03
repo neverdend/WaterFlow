@@ -57,7 +57,7 @@ function GameScene:dataProcess()
     local dataKey = {"gridX", "gridY", "cordX", "cordY", "veloU", "veloV", "veloUV", "waterHeight", "landHeight", "waterDepth"}
     
     -- 读取txt数据，一次读一行
-    local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF.TXT")
+    local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF_reduced.TXT")
     local nextLine, remainFile = getNextLine(file)
     while nextLine ~= nil do
         -- 构造数据
@@ -130,8 +130,8 @@ function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
     for key, value in ipairs(self.data) do
         local cordXScaled, cordYScaled = self:changeCordinate(value["cordX"], value["cordY"])
-        local veloXScaled = value["veloV"] * 50
-        local veloYScaled = value["veloU"] * 50
+        local veloXScaled = value["veloV"] * 20
+        local veloYScaled = value["veloU"] * 20
         animationLayer:addChild(createMovingPoint(cordXScaled, cordYScaled, veloXScaled, veloYScaled))
     end
     return animationLayer
@@ -144,7 +144,7 @@ end
 function createMovingPoint(startPointX, startPointY, velocityX, velocityY)
     local point = cc.Sprite:create("93-dot-red-3.png")
     local placeAction = cc.Place:create(cc.p(startPointX, startPointY))
-    local moveToAction = cc.MoveTo:create(5, cc.p(startPointX+velocityX, startPointY+velocityY))
+    local moveToAction = cc.MoveTo:create(2, cc.p(startPointX+velocityX, startPointY+velocityY))
     local sequenceAction = cc.Sequence:create(placeAction, moveToAction)
     local repeatForeverAction = cc.RepeatForever:create(sequenceAction)
     point:runAction(repeatForeverAction)
