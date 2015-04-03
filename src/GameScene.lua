@@ -57,7 +57,7 @@ function GameScene:dataProcess()
     local dataKey = {"gridX", "gridY", "cordX", "cordY", "veloU", "veloV", "veloUV", "waterHeight", "landHeight", "waterDepth"}
     
     -- 读取txt数据，一次读一行
-    local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF_reduced.TXT")
+    local file = cc.FileUtils:getInstance():getStringFromFile("RESULT45000BF.TXT")
     local nextLine, remainFile = getNextLine(file)
     while nextLine ~= nil do
         -- 构造数据
@@ -130,8 +130,8 @@ function GameScene:createAnimationLayer()
     local animationLayer = cc.Layer:create()
     for key, value in ipairs(self.data) do
         local cordXScaled, cordYScaled = self:changeCordinate(value["cordX"], value["cordY"])
-        local veloXScaled = value["veloV"] * 20
-        local veloYScaled = value["veloU"] * 20
+        local veloXScaled = value["veloU"] * 20
+        local veloYScaled = value["veloV"] * 20
         animationLayer:addChild(createMovingPoint(cordXScaled, cordYScaled, veloXScaled, veloYScaled))
     end
     return animationLayer
